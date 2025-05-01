@@ -16,7 +16,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 config = T5Config.from_pretrained("t5-small")  # Or custom config path if you have one
 model = T5ForConditionalGeneration(config)
-model.load_state_dict(torch.load("/mnt/g/projects/drug_classification/models/t5_interaction_gen.pt", map_location=device))
+model.load_state_dict(torch.load("t5_interaction_gen.pt", map_location=device))
 tokenizer = T5Tokenizer.from_pretrained("t5-small")
 model.to(device)
 model.eval()
