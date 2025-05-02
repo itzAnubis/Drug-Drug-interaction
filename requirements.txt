@@ -3,4 +3,6 @@ uvicorn
 torch
 transformers
 pubchempy
-rdkit-pypi
+rdkit==2023.9.5
+numpy==1.26.4  # Must come before RDKit installation
+sentencepiece  # Required for T5 tokenizer

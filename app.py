@@ -16,7 +16,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 config = T5Config.from_pretrained("t5-small")  # Or custom config path if you have one
 model = T5ForConditionalGeneration(config)
-model.load_state_dict(torch.load("t5_interaction_gen.pt", map_location=device))
+model.load_state_dict(torch.load("models/t5_interaction_gen.pt", map_location=device))
 tokenizer = T5Tokenizer.from_pretrained("t5-small")
 model.to(device)
 model.eval()
@@ -48,13 +48,16 @@ def mol_to_base64(smiles: str):
 
 @app.post("/predict")
 def predict_interaction(data: DrugPair):
-    smi1 = name_to_smiles(data.drug1)
-    smi2 = name_to_smiles(data.drug2)
+    drug1 = data.drug1
+    drug2 = data.drug2
+    
+    smi1 = name_to_smiles(drug1)
+    smi2 = name_to_smiles(drug2)
 
     if smi1 is None or smi2 is None:
         return {"error": "One or both drug names could not be converted to SMILES."}
 
-    input_text = f"Drug1: {data.drug1} Drug2: {data.drug2}"
+    input_text = f"Drug1: {drug1} Drug2: {drug2}"
     input_ids = tokenizer.encode(input_text, return_tensors="pt").to(device)
     output = model.generate(input_ids, max_length=128)
     result = tokenizer.decode(output[0], skip_special_tokens=True)
