@@ -3,9 +3,9 @@
 
 [![Python](https://img.shields.io/badge/Python-3.8%2B-blue)](https://www.python.org/)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.0%2B-orange)](https://pytorch.org/)
-[![Transformers](https://img.shields.io/badge/🤗%20Transformers-T5-small-yellow)](https://huggingface.co/docs/transformers/model_doc/t5)
+[![Transformers](https://img.shields.io/badge/Transformers-T5--small-yellow)](https://huggingface.co/docs/transformers)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.95%2B-green)](https://fastapi.tiangolo.com/)
-[![React](https://img.shields.io/badge/React-18%2B-blue)](https://reactjs.org/)
+[![React](https://img.shields.io/badge/React-18%2B-blue)](https://react.dev/)
 
 A machine learning system that predicts potential interactions between two drugs using a fine-tuned T5-small language model, complete with molecular visualization.
 
@@ -179,4 +179,4 @@ Contributions are welcome! Please follow these steps:
 ---
 
 **Disclaimer**: This system provides predictions only and should not be used as a substitute for professional medical advice. Always consult a healthcare provider about potential drug interactions.
-```
+
