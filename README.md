@@ -1,4 +1,4 @@
-```markdown
+
 # Drug-Drug Interaction (DDI) Prediction System
 
 [![Python](https://img.shields.io/badge/Python-3.8%2B-blue)](https://www.python.org/)
@@ -7,6 +7,7 @@
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.95%2B-green)](https://fastapi.tiangolo.com/)
 [![React](https://img.shields.io/badge/React-18%2B-blue)](https://react.dev/)
 
+```markdown
 A machine learning system that predicts potential interactions between two drugs using a fine-tuned T5-small language model, complete with molecular visualization.
 
 ## Table of Contents
