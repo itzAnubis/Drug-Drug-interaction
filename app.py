@@ -1,4 +1,23 @@
+import nest_asyncio
+import uvicorn
+import threading
+from pyngrok import ngrok
+import requests
+
+nest_asyncio.apply()
+
+try:
+    public_url = ngrok.connect(8000)
+    print(f"🚀 Your public API is available at: {public_url}/docs")
+
+    sheet_url = "https://script.google.com/macros/s/AKfycbw14Qm1u1BlV9fZp83h0_7GGKLTDk9arMx6MHvHw4jZrt7A2zzBBS0yLdawINNqPM2R/exec"
+    requests.post(sheet_url, json={"url": str(public_url)})
+
+except Exception as e:
+    print("❌ Failed to start Ngrok tunnel:", str(e))
+
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from transformers import T5ForConditionalGeneration, T5Config, T5Tokenizer
 from rdkit import Chem
@@ -10,27 +29,36 @@ from io import BytesIO
 
 app = FastAPI()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-
-
-config = T5Config.from_pretrained("t5-small")  # Or custom config path if you have one
+config = T5Config.from_pretrained("t5-small")
 model = T5ForConditionalGeneration(config)
-model.load_state_dict(torch.load("models/t5_interaction_gen.pt", map_location=device))
+
+try:
+    model.load_state_dict(torch.load("/content/drive/MyDrive/Copy of t5_interaction_gen.pt", map_location=device))
+    print("✅ Model loaded successfully")
+except Exception as e:
+    print("❌ Error loading model:", str(e))
+
 tokenizer = T5Tokenizer.from_pretrained("t5-small")
 model.to(device)
 model.eval()
-
 
 class DrugPair(BaseModel):
     drug1: str
     drug2: str
 
 def name_to_smiles(query: str):
-    """Convert drug name to SMILES using PubChem if needed"""
     mol = Chem.MolFromSmiles(query)
     if mol is not None:
-        return query  # It's already a valid SMILES
+        return query
     try:
         compound = pcp.get_compounds(query, 'name')[0]
         return compound.isomeric_smiles
@@ -50,7 +78,7 @@ def mol_to_base64(smiles: str):
 def predict_interaction(data: DrugPair):
     drug1 = data.drug1
     drug2 = data.drug2
-    
+
     smi1 = name_to_smiles(drug1)
     smi2 = name_to_smiles(drug2)
 
@@ -72,3 +100,10 @@ def predict_interaction(data: DrugPair):
         "drug1_img_base64": img1,
         "drug2_img_base64": img2
     }
+
+# Run FastAPI app using threading (for Colab)
+def run_app():
+    uvicorn.run(app, host="0.0.0.0", port=8000)
+
+thread = threading.Thread(target=run_app)
+thread.start()
